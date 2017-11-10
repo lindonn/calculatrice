@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     Button buttonPoint;
     Button buttonEqual;
 
-    EditText resultat;
+    EditText resultatText;
 
     double memoire;
     char lastOperand;
@@ -56,9 +56,10 @@ public class MainActivity extends AppCompatActivity {
         buttonClear = (Button) findViewById(R.id.buttonClear);
         buttonEqual = (Button) findViewById(R.id.buttonEqual);
 
-        resultat = (EditText) findViewById(R.id.res);
+        resultatText = (EditText) findViewById(R.id.res);
 
         memoire=0;
+        lastOperand=' ';
 
         buttonPlus.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -205,18 +206,39 @@ public class MainActivity extends AppCompatActivity {
     public void calculer(View view){
         Button button = (Button) view;
         char b_char = button.getText().charAt(0);
+        double resultat = 0;
         if (isDigit(b_char)){
-            resultat.getText().append(b_char);
+            resultatText.getText().append(b_char);
+            memoire = Double.valueOf(resultatText.getText().toString());
         }
         else{
             if (isOperator(b_char)){
-                if (memoire==0){
-                    memoire = Double.valueOf(resultat.getText().toString());
+                if (' '==lastOperand ){
+                    memoire = Double.valueOf(resultatText.getText().toString());
                     lastOperand = b_char;
+                    resultatText.setText("");
                 }else
-                    doMath(memoire, Double.valueOf(resultat.getText().toString()), lastOperand);
+                    resultat = doMath(memoire, Double.valueOf(resultatText.getText().toString()), lastOperand);
+                    memoire= resultat;
+                    resultatText.setText(String.valueOf(resultat));
             }
         }
+    }
+
+    private Double doMath(double op1, double op2, char c){
+        double res = 0;
+        if (c =='+') {
+            res = op1 + op2;
+        }else if(c =='-'){
+            res= op1-op2;
+        }else if(c=='*'){
+            res = op1*op2;
+        }
+        else if(c=='/'){
+            res= op1/op2;
+        }
+        return res;
+
     }
 
     private boolean isOperator(char c){
